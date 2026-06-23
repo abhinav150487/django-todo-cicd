@@ -11,7 +11,11 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'docker build -t todo-app .'
+                sh '''
+                docker rm -f todo-app-container || true
+                docker rmi -f todo-app || true
+                docker build -t todo-app .
+                '''
             }
         }
 
@@ -23,7 +27,10 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 8000:8000 --name todo-app-container todo-app'
+                sh '''
+                docker rm -f todo-app-container || true
+                docker run -d -p 8000:8000 --name todo-app-container todo-app
+                '''
             }
         }
     }
